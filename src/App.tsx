@@ -1,5 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 
+import GlobalLayout from "./components/global-layout";
+import RouteGuard from "./components/route-guard";
 import AdminProfile from "./pages/admin";
 import Forgot from "./pages/auth/forgot";
 import Login from "./pages/auth/login";
@@ -17,23 +19,25 @@ const App = () => {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<SignUp />} />
       <Route path="/forgot" element={<Forgot />} />
       <Route path="/password-reset" element={<PasswordReset />} />
       <Route path="/set-newpassword" element={<SetNewPassword />} />
-      <Route path="/" element={<EthlyFiPage />} />
-      <Route path="/task-list" element={<TaskList />} />
-      <Route path="/task-page" element={<TaskDetailsPage />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/profile/wallet" element={<WalletPage />} />
-      <Route path="/admin" element={<AdminProfile />} />
-      <Route path="/signup" element={<SignUp />} />
-      <Route path="/uploader" element={<Uploader />} />
-
-      {/* <Route path="/practices" element={<Practice />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/question-attempt/:id" element={<AttemptQuestion />} />
-      <Route path="/question-solution/:id" element={<QuestionSolution />} />
-      <Route path="/question-artboard/:id" element={<QuestionArtboard />} /> */}
+      <Route
+        element={
+          <RouteGuard>
+            <GlobalLayout />
+          </RouteGuard>
+        }
+      >
+        <Route path="/" element={<EthlyFiPage />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/uploader" element={<Uploader />} />
+        <Route path="/admin" element={<AdminProfile />} />
+        <Route path="/task-list" element={<TaskList />} />
+        <Route path="/profile/wallet" element={<WalletPage />} />
+        <Route path="/task-page" element={<TaskDetailsPage />} />
+      </Route>
     </Routes>
   );
 };
