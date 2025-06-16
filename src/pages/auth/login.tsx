@@ -1,82 +1,159 @@
-import { Chrome } from "lucide-react";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { FileText, Mail, Lock, ArrowRight } from 'lucide-react';
 
-const Login = () => {
+export function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const { login, loading } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    try {
+      await login(email, password);
+      // Navigation will be handled by route protection
+    } catch (err) {
+      setError('Invalid email or password');
+    }
+  };
+
+  const demoAccounts = [
+    { email: 'admin@taskflow.com', role: 'admin', color: 'bg-purple-500' },
+    { email: 'uploader@taskflow.com', role: 'uploader', color: 'bg-blue-500' },
+    { email: 'user@taskflow.com', role: 'user', color: 'bg-green-500' },
+  ];
+
+  const fillDemo = (email: string) => {
+    setEmail(email);
+    setPassword('password');
+  };
+
   return (
-    <div className="h-screen w-full bg-white">
-      <div className="flex h-full flex-col items-center justify-center px-4 py-10 sm:px-6 lg:px-20">
-        {/* Branding */}
-        <div className="flex w-full max-w-md flex-col items-center justify-center gap-8">
-          <h1 className="text-4xl font-bold text-primary sm:text-5xl">
-            WebKamai
-          </h1>
-
-          {/* Heading */}
-          <div className="text-center">
-            <h2 className="text-2xl font-bold sm:text-3xl md:text-4xl">
-              LOGIN
-            </h2>
-            <p className="text-sm font-medium text-[#525252] sm:text-base">
-              How do I get started? Lorem ipsum dolor sit amet.
-            </p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-6">
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <div className="flex items-center justify-center space-x-2">
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+              <FileText className="w-5 h-5 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold">TaskFlow</h1>
           </div>
+          <p className="text-gray-600">Sign in to your account</p>
+        </div>
 
-          {/* Google Login */}
-          <div className="w-full">
+        {/* Demo Accounts */}
+        <Card className="border-dashed">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm">Demo Accounts</CardTitle>
+            <CardDescription className="text-xs">
+              Click to auto-fill credentials (password: password)
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {demoAccounts.map((account) => (
+              <Button
+                key={account.email}
+                variant="outline"
+                size="sm"
+                className="w-full justify-start text-xs"
+                onClick={() => fillDemo(account.email)}
+              >
+                <div className={`w-3 h-3 rounded-full ${account.color} mr-2`} />
+                {account.role.charAt(0).toUpperCase() + account.role.slice(1)} - {account.email}
+              </Button>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Login Form */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Sign In</CardTitle>
+            <CardDescription>
+              Enter your credentials to access your account
+            </CardDescription>
+          </CardHeader>
+          <form onSubmit={handleSubmit}>
+            <CardContent className="space-y-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Password</Label>
+                  <Link
+                    to="/forgot-password"
+                    className="text-xs text-blue-600 hover:text-blue-500 transition-colors"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10"
+                    required
+                  />
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="space-y-4">
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? 'Signing in...' : 'Sign In'}
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </CardFooter>
+          </form>
+        </Card>
+
+        {/* Sign Up Link */}
+        <div className="text-center">
+          <p className="text-sm text-gray-600">
+            Don't have an account?{' '}
             <Link
-              to=""
-              className="flex h-12 w-full items-center justify-center rounded-full border border-gray-300 bg-white shadow-sm transition hover:bg-gray-100"
+              to="/signup"
+              className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
             >
-              <Chrome className="mr-2 h-5 w-5" />
-              <span className="text-sm font-medium">
-                Login with <strong>Google</strong>
-              </span>
-            </Link>
-          </div>
-
-          {/* Divider */}
-          <fieldset className="w-full border-t border-gray-300 text-center">
-            <legend className="mx-auto px-4 text-base font-medium sm:text-lg">
-              <strong>Login</strong> with Others
-            </legend>
-          </fieldset>
-
-          {/* Email & Password */}
-          <div className="flex w-full flex-col gap-4">
-            <input
-              type="email"
-              placeholder="Email"
-              className="h-12 w-full rounded-full border border-gray-300 px-5 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              className="h-12 w-full rounded-full border border-gray-300 px-5 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-            <Link
-              to="/forgot"
-              className="w-full text-right text-sm font-medium text-primary"
-            >
-              Forgot Password?
-            </Link>
-          </div>
-
-          {/* Submit Button */}
-          <button className="h-12 w-full rounded-full bg-primary px-5 text-white shadow-sm transition hover:bg-primary/90">
-            Login
-          </button>
-
-          {/* Footer */}
-          <p className="text-sm font-medium text-[#525252] sm:text-base">
-            Don't have an account?{" "}
-            <Link to="/signup" className="font-bold text-primary">
-              Sign Up
+              Sign up here
             </Link>
           </p>
         </div>
       </div>
     </div>
   );
-};
-
-export default Login;
+}
