@@ -151,7 +151,7 @@ export function TaskCard({ task, onAction, showActions = false, actionType }: Ta
         </div>
       </CardHeader>
       
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-2">
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center text-gray-600">
             <User className="w-4 h-4 mr-1" />
@@ -230,7 +230,9 @@ export function TaskCard({ task, onAction, showActions = false, actionType }: Ta
           </div>
         )}
 
-        {renderActions()}
+        <div className="h-full">
+          {renderActions()}
+        </div>
       </CardContent>
     </Card>
   );

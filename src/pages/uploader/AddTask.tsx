@@ -12,6 +12,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from '@/hooks/use-toast';
 import { Plus, X, DollarSign, FileText, Tag, List, Users, User, Wallet, AlertTriangle } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const categories = [
   'Content Creation',
@@ -186,10 +187,9 @@ export function AddTask() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Task Type Selection */}
             <div className="space-y-3">
               <Label>Task Assignment Type</Label>
-              <RadioGroup
+              {/* <RadioGroup
                 value={formData.taskType}
                 onValueChange={(value: 'single' | 'multiple') =>
                   setFormData(prev => ({ ...prev, taskType: value, maxCompletions: value === 'single' ? '1' : '5' }))
@@ -224,10 +224,68 @@ export function AddTask() {
                     </div>
                   </div>
                 </div>
+              </RadioGroup> */}
+              <RadioGroup
+                value={formData.taskType}
+                onValueChange={(value: 'single' | 'multiple') =>
+                  setFormData(prev => ({ ...prev, taskType: value, maxCompletions: value === 'single' ? '1' : '5' }))
+                }
+                className="space-y-3"
+              >
+                {/* Single Person Task Option */}
+                <Label htmlFor="single" className="block">
+                  <div className={`flex items-center space-x-3 p-3 border rounded-lg transition-colors cursor-pointer 
+      ${formData.taskType === 'single' ? 'bg-blue-100 border-blue-300' : 'hover:bg-gray-50'}`}
+                  >
+
+                    <div className="flex items-center space-x-3 flex-1">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center 
+          ${formData.taskType === 'single' ? 'bg-blue-200' : 'bg-blue-100'}`}>
+                        <User className={`w-4 h-4 ${formData.taskType === 'single' ? 'text-blue-700' : 'text-blue-600'}`} />
+                      </div>
+                      <div>
+                        <span className="font-medium">Single Person Task</span>
+                        <p className="text-sm text-gray-600">Only one person can work on this task</p>
+                      </div>
+                    </div>
+                    <RadioGroupItem
+                      value="single"
+                      id="single"
+                      className={cn("text-blue-600 border-white focus:ring-0 focus:ring-offset-0 p-2 ",
+                        formData.taskType === 'single' && "bg-blue-500 border-blue-500"
+                      )}
+                    />
+                  </div>
+                </Label>
+
+                {/* Multiple Person Task Option */}
+                <Label htmlFor="multiple" className="block">
+                  <div className={`flex items-center space-x-3 p-3 border rounded-lg transition-colors cursor-pointer 
+      ${formData.taskType === 'multiple' ? 'bg-blue-100 border-blue-300' : 'hover:bg-gray-50'}`}
+                  >
+
+                    <div className="flex items-center space-x-3 flex-1">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center 
+          ${formData.taskType === 'multiple' ? 'bg-green-200' : 'bg-green-100'}`}>
+                        <Users className={`w-4 h-4 ${formData.taskType === 'multiple' ? 'text-green-700' : 'text-green-600'}`} />
+                      </div>
+                      <div>
+                        <span className="font-medium">Multiple Person Task</span>
+                        <p className="text-sm text-gray-600">Multiple people can complete this task</p>
+                      </div>
+                    </div>
+                    <RadioGroupItem
+                      value="multiple"
+                      id="multiple"
+                      className={cn("text-blue-600 border-white focus:ring-0 focus:ring-offset-0 p-2 ",
+                        formData.taskType === 'multiple' && "bg-blue-500 border-blue-500"
+                      )}
+                    />
+                  </div>
+                </Label>
               </RadioGroup>
             </div>
 
-            {/* Max Completions for Multiple Tasks */}
             {formData.taskType === 'multiple' && (
               <div className="space-y-2">
                 <Label htmlFor="maxCompletions">Maximum Completions</Label>
@@ -248,7 +306,6 @@ export function AddTask() {
               </div>
             )}
 
-            {/* Basic Information */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="title">Task Title *</Label>
@@ -318,7 +375,6 @@ export function AddTask() {
               />
             </div>
 
-            {/* Requirements */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <Label className="flex items-center">
@@ -352,7 +408,6 @@ export function AddTask() {
               ))}
             </div>
 
-            {/* Tags */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <Label className="flex items-center">
@@ -386,7 +441,6 @@ export function AddTask() {
               ))}
             </div>
 
-            {/* Preview */}
             {formData.title && (
               <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
                 <h3 className="font-medium">Preview</h3>
@@ -422,7 +476,7 @@ export function AddTask() {
           <Button type="button" variant="outline" onClick={() => navigate('/uploader')}>
             Cancel
           </Button>
-          <Button type="submit" disabled={totalCost > userBalance}>
+          <Button type="submit" disabled={totalCost > userBalance} className='bg-blue-500 hover:bg-blue-100 hover:text-blue-500 hover:border-blue-500'>
             {totalCost > userBalance ? 'Insufficient Balance' : 'Create Task'}
           </Button>
         </div>
